@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"os"
 
+	"github.com/sebbalex/issue-opener/engines"
 	"github.com/sebbalex/issue-opener/model"
 	log "github.com/sirupsen/logrus"
 )
@@ -18,7 +19,7 @@ func init() {
 		fmt.Fprintf(flag.CommandLine.Output(), "Usage: %s [ OPTIONS ] URL\n", os.Args[0])
 		flag.PrintDefaults()
 	}
-	// remoteBaseURLPtr := flag.String("remote-base-url", "", "The URL pointing to the directory where the publiccode.yml file is located.")
+	// remoteBaseURLPtr := flag.String("remote-url", "", "The URL pointing to the directory where the publiccode.yml file is located.")
 	helpPtr := flag.Bool("help", false, "Display command line usage.")
 
 	if *helpPtr || len(flag.Args()) < 1 {
@@ -27,8 +28,13 @@ func init() {
 	}
 }
 
+var e = engines.NewEngine()
+
 func main() {
 	flag.Parse()
+
+	//init API engines
+	engines.RegisterClientAPIs()
 }
 
 // Start will get go API request and populate Event struct
@@ -42,6 +48,8 @@ func Start(url *url.URL, valid bool, valErrors interface{}) error {
 	event.URL = url
 	event.Valid = valid
 	event.ValidationError = valErrors.([]model.Error)
+
+	e.IdentifyVCS(url)
 	return nil
 }
 
