@@ -18,12 +18,12 @@ var valErrors string = `[
 
 // TODO disable logging in stdout while testing
 
-func TestMain(t *testing.T) {
-	// must test usage flags
-}
+// func TestMain(t *testing.T) {
+// 	// must test usage flags
+// }
 
 func TestStartf(t *testing.T) {
-	assert.Nil(t, Startf(urlString, valid, valErrors))
+	assert.Nil(t, StartCLI(urlString, valid, valErrors))
 }
 
 func TestStart(t *testing.T) {

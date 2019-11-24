@@ -12,29 +12,29 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func init() {
+var e = engines.NewEngine()
+
+func main() {
 	log.SetLevel(log.DebugLevel)
+
+	//init API engines
+	engines.RegisterClientAPIs()
 
 	flag.Usage = func() {
 		fmt.Fprintf(flag.CommandLine.Output(), "Usage: %s [ OPTIONS ] URL\n", os.Args[0])
 		flag.PrintDefaults()
 	}
-	// remoteBaseURLPtr := flag.String("remote-url", "", "The URL pointing to the directory where the publiccode.yml file is located.")
+	repoURL := flag.String("repo-url", "", "The URL pointing to repository which contains the publiccode.yml.")
 	helpPtr := flag.Bool("help", false, "Display command line usage.")
+	flag.Parse()
 
 	if *helpPtr || len(flag.Args()) < 1 {
 		flag.Usage()
 		return
 	}
-}
-
-var e = engines.NewEngine()
-
-func main() {
-	flag.Parse()
-
-	//init API engines
-	engines.RegisterClientAPIs()
+	if *repoURL != "" {
+		StartCLI(*repoURL, true, "[]")
+	}
 }
 
 // Start will get go API request and populate Event struct
@@ -44,23 +44,26 @@ func main() {
 // - valErrors is a string in JSON format that will be deserialized
 //   it contains all validation errors
 func Start(url *url.URL, valid bool, valErrors interface{}) error {
+	log.Debug("starting...")
 	event := model.Event{}
 	event.URL = url
 	event.Valid = valid
 	event.ValidationError = valErrors.([]model.Error)
 
-	e.IdentifyVCS(url)
-	return nil
+	d, err := e.IdentifyVCS(url)
+	e.StartFlow(url, d)
+	return err
 }
 
-// Startf same as above but accepting a more generic
+// StartCLI same as above but accepting a more generic
 // type for handy usage
 // TODO to be renamed
-func Startf(urlString string, valid bool, valErrors string) error {
+func StartCLI(urlString string, valid bool, valErrors string) error {
 	log.Println("Handle event")
 
 	urlParsed, err := url.Parse(urlString)
 	if err != nil {
+		log.Fatal(err)
 		return err
 	}
 
@@ -68,10 +71,12 @@ func Startf(urlString string, valid bool, valErrors string) error {
 	// deserialize valErrors
 	err = json.Unmarshal([]byte(valErrors), &verr)
 	if err != nil {
+		log.Fatal(err)
 		return err
 	}
 
 	if err = Start(urlParsed, valid, verr); err != nil {
+		log.Fatal(err)
 		return err
 	}
 
