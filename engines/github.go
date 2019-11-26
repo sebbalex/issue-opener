@@ -92,11 +92,11 @@ func RegisterSingleGithubAPI() SingleRepoHandler {
 			log.Errorf("error filtering issues %v", err)
 			return err
 		}
-		log.Debugf("filtered issues: %v", v)
+		log.Tracef("filtered issues: %v", v)
 
 		// populate Comments chan
 		for _, issue := range v {
-			enrichWithComments(domain, urlBase, issue.ID, comments)
+			enrichWithComments(domain, urlBase, issue.Number, comments)
 		}
 
 		return nil
@@ -136,13 +136,12 @@ func enrichWithComments(domain Domain, urlBase *url.URL, issueID int, comments C
 		log.Errorf("error filtering comments %v", err)
 		return nil, err
 	}
-	log.Debugf("filtered comments: %v", v)
+	log.Tracef("filtered comments: %v", v)
 
 	return v, nil
 }
 
 func filterMyComments(ghis Comments) (Comments, error) {
-	log.Debugf("filterMyComments()")
 	b := ghis[:0]
 	for _, x := range ghis {
 		log.Debugf("filterMyComments() comment ID: %v", x.ID)
@@ -155,12 +154,11 @@ func filterMyComments(ghis Comments) (Comments, error) {
 }
 
 func filterMyIssues(ghis Issues) (Issues, error) {
-	log.Debug("filterMyIssues()")
 	b := ghis[:0]
 	for _, x := range ghis {
-		log.Debugf("filterMyIssues() issues ID: %v", x.ID)
+		log.Debugf("filterMyIssues() issues ID: %v", x.Number)
 		if x.User.Login == ghUsername {
-			log.Debugf("filterMyIssues() issue belongs to me: %v", x.ID)
+			log.Debugf("filterMyIssues() issue belongs to me: %v", x.Number)
 			b = append(b, x)
 		}
 	}
