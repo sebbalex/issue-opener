@@ -8,22 +8,24 @@ import (
 	"net/http"
 	"net/url"
 	"path"
+	"strconv"
 	"strings"
 
+	vcs "github.com/alranel/go-vcsurl"
 	"github.com/italia/developers-italia-backend/crawler/httpclient"
 	"github.com/sebbalex/issue-opener/model"
 	log "github.com/sirupsen/logrus"
 )
 
-// Comment GH comment struct
-type Comment model.Comment
+// Comments GH comment struct
+type Comments []model.Comment
 
 // Issues type
 type Issues []model.GHIssue
 
 // SingleRepoHandler returns the client handler for an a
 // single repository (every domain has a different handler implementation).
-type SingleRepoHandler func(domain Domain, url *url.URL, comments chan Comment) error
+type SingleRepoHandler func(domain Domain, url *url.URL, comments Comments) error
 
 // CommentsHandler ...
 type CommentsHandler func(domain Domain, url *url.URL) error
@@ -38,22 +40,27 @@ var ghUsername string = "developers-italia-bot"
 // time="2019-11-18T01:05:26Z" level=error msg="[AgID/pat] invalid publiccode.yml: logo: invalid image size of 63 (min 120px of width): src/app/grafica/pat_semplice.png"
 // time="2019-11-18T01:05:26Z" level=error msg="Appending the bad file URL to the list: https://raw.githubusercontent.com/AgID/pat/master/publiccode.yml"
 
+func getAPIUrlAndHeaders(domain Domain, u url.URL) (*url.URL, map[string]string) {
+	// Set BasicAuth header.
+	headers := make(map[string]string)
+	headers["Authorization"] = githubBasicAuth(domain)
+
+	// Set domain host to new host.
+	domain.Host = u.Hostname()
+
+	u.Path = path.Join("repos", u.Path, "issues")
+	u.Path = strings.Trim(u.Path, "/")
+	u.Host = "api." + u.Host
+	return &u, headers
+}
+
 //https://developer.github.com/v3/issues/#list-issues-for-a-repository GET /repos/:owner/:repo/issues
 
 // RegisterSingleGithubAPI ....
 func RegisterSingleGithubAPI() SingleRepoHandler {
-	return func(domain Domain, u *url.URL, comments chan Comment) error {
-		// Set BasicAuth header.
-		headers := make(map[string]string)
-		headers["Authorization"] = githubBasicAuth(domain)
+	return func(domain Domain, urlBase *url.URL, comments Comments) error {
 
-		// Set domain host to new host.
-		domain.Host = u.Hostname()
-
-		u.Path = path.Join("repos", u.Path, "issues")
-		u.Path = strings.Trim(u.Path, "/")
-		u.Host = "api." + u.Host
-
+		u, headers := getAPIUrlAndHeaders(domain, *urlBase)
 		// Get List of issues for repository.
 		log.Debugf("calling API %s", u)
 		resp, err := httpclient.GetURL(u.String(), headers)
@@ -72,7 +79,6 @@ func RegisterSingleGithubAPI() SingleRepoHandler {
 			log.Errorf("error unmarshalling response from GH issues API: %v", err)
 			return err
 		}
-		log.Debugf("issues: %v", v)
 
 		// filtering mine
 		v, err = filterMyIssues(v)
@@ -80,16 +86,76 @@ func RegisterSingleGithubAPI() SingleRepoHandler {
 			log.Errorf("error filtering issues %v", err)
 			return err
 		}
+		log.Debugf("filtered issues: %v", v)
+
+		// populate Comments chan
+		for _, issue := range v {
+			enrichWithComments(domain, urlBase, issue.ID, comments)
+		}
 
 		return nil
 	}
 }
 
-func filterMyIssues(ghis Issues) (Issues, error) {
-	log.Debugf("filterMyIssues() issues: %v", ghis)
+func enrichWithComments(domain Domain, urlBase *url.URL, issueID int, comments Comments) (Comments, error) {
+	if vcs.IsRawFile(urlBase) {
+		urlBase = vcs.GetRepo(urlBase)
+	}
+
+	u, headers := getAPIUrlAndHeaders(domain, *urlBase)
+	u.Path = path.Join(u.Path, strconv.Itoa(issueID), "comments")
+
+	// Get List of issues for repository.
+	log.Debugf("calling API %s", u)
+	resp, err := httpclient.GetURL(u.String(), headers)
+	if err != nil {
+		log.Errorf("error getting issues comments api: %v", err)
+		return nil, err
+	}
+	if resp.Status.Code != http.StatusOK {
+		log.Warnf("Request returned: %s", string(resp.Body))
+		return nil, errors.New("request returned an incorrect http.Status: " + resp.Status.Text)
+	}
+
+	var v Comments
+	err = json.Unmarshal(resp.Body, &v)
+	if err != nil {
+		log.Errorf("error unmarshalling response from GH comments issues API: %v", err)
+		return nil, err
+	}
+
+	// filtering mine
+	v, err = filterMyComments(v)
+	if err != nil {
+		log.Errorf("error filtering comments %v", err)
+		return nil, err
+	}
+	log.Debugf("filtered comments: %v", v)
+
+	return v, nil
+}
+
+func filterMyComments(ghis Comments) (Comments, error) {
+	log.Debugf("filterMyComments()")
 	b := ghis[:0]
 	for _, x := range ghis {
+		log.Debugf("filterMyComments() comment ID: %v", x.ID)
 		if x.User.Login == ghUsername {
+			log.Debugf("filterMyComments() comment belongs to me %v", x.ID)
+			b = append(b, x)
+		}
+	}
+	log.Debugf("filtered comments: %v", b)
+	return b, nil
+}
+
+func filterMyIssues(ghis Issues) (Issues, error) {
+	log.Debug("filterMyIssues()")
+	b := ghis[:0]
+	for _, x := range ghis {
+		log.Debugf("filterMyIssues() issues ID: %v", x.ID)
+		if x.User.Login == ghUsername {
+			log.Debugf("filterMyIssues() issue belongs to me: %v", x.ID)
 			b = append(b, x)
 		}
 	}

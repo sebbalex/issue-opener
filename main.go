@@ -50,7 +50,7 @@ func Start(url *url.URL, valid bool, valErrors interface{}) error {
 	event.URL = url
 	event.Valid = valid
 	event.ValidationError = valErrors.([]model.Error)
-	log.Debugf("on: %s", event)
+	log.Debugf("on: %v", event)
 
 	d, err := e.IdentifyVCS(url)
 	e.StartFlow(url, d)

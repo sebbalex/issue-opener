@@ -12,7 +12,7 @@ import (
 // Engine is a helper class representing an engine.
 type Engine struct {
 	domains  []Domain
-	comments chan Comment
+	comments Comments
 }
 
 // Repository is a single code repository. FileRawURL contains the direct url to the raw file.

@@ -28,7 +28,7 @@ func (domain Domain) API() string {
 	return domain.Host[:truncateIndex]
 }
 
-func (domain Domain) processSingleRepo(url *url.URL, comments chan Comment) error {
+func (domain Domain) processSingleRepo(url *url.URL, comments Comments) error {
 	engine, err := GetSingleClientAPIEngine(domain.API())
 	if err != nil {
 		return err
