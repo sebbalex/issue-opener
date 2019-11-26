@@ -11,6 +11,7 @@ import (
 )
 
 func TestGithub(t *testing.T) {
+	log.SetLevel(log.DebugLevel)
 	RegisterClientAPIs()
 	var e = NewEngine()
 	for _, repoURL := range githubURLs {

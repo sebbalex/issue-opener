@@ -61,6 +61,12 @@ func RegisterSingleGithubAPI() SingleRepoHandler {
 	return func(domain Domain, urlBase *url.URL, comments Comments) error {
 
 		u, headers := getAPIUrlAndHeaders(domain, *urlBase)
+
+		// filtering for created by me
+		q := u.Query()
+		q.Set("creator", ghUsername)
+		u.RawQuery = q.Encode()
+
 		// Get List of issues for repository.
 		log.Debugf("calling API %s", u)
 		resp, err := httpclient.GetURL(u.String(), headers)
@@ -145,7 +151,6 @@ func filterMyComments(ghis Comments) (Comments, error) {
 			b = append(b, x)
 		}
 	}
-	log.Debugf("filtered comments: %v", b)
 	return b, nil
 }
 
@@ -159,7 +164,6 @@ func filterMyIssues(ghis Issues) (Issues, error) {
 			b = append(b, x)
 		}
 	}
-	log.Debugf("filtered issues: %v", b)
 	return b, nil
 }
 
