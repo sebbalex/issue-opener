@@ -18,12 +18,17 @@ import (
 // Comment GH comment struct
 type Comment model.Comment
 
+// Issues type
+type Issues []model.GHIssue
+
 // SingleRepoHandler returns the client handler for an a
 // single repository (every domain has a different handler implementation).
 type SingleRepoHandler func(domain Domain, url *url.URL, comments chan Comment) error
 
 // CommentsHandler ...
 type CommentsHandler func(domain Domain, url *url.URL) error
+
+var ghUsername string = "developers-italia-bot"
 
 // Ex:
 // time="2019-11-18T01:05:25Z" level=error msg="Error parsing publiccode.yml for https://raw.githubusercontent.com/AgID/pat/master/publiccode.yml."
@@ -61,7 +66,7 @@ func RegisterSingleGithubAPI() SingleRepoHandler {
 			return errors.New("request returned an incorrect http.Status: " + resp.Status.Text)
 		}
 
-		var v []model.GHIssue
+		var v Issues
 		err = json.Unmarshal(resp.Body, &v)
 		if err != nil {
 			log.Errorf("error unmarshalling response from GH issues API: %v", err)
@@ -69,12 +74,27 @@ func RegisterSingleGithubAPI() SingleRepoHandler {
 		}
 		log.Debugf("issues: %v", v)
 
+		// filtering mine
+		v, err = filterMyIssues(v)
+		if err != nil {
+			log.Errorf("error filtering issues %v", err)
+			return err
+		}
+
 		return nil
 	}
 }
 
-func getMyIssues(ghis []model.GHIssue) error {
-	return nil
+func filterMyIssues(ghis Issues) (Issues, error) {
+	log.Debugf("filterMyIssues() issues: %v", ghis)
+	b := ghis[:0]
+	for _, x := range ghis {
+		if x.User.Login == ghUsername {
+			b = append(b, x)
+		}
+	}
+	log.Debugf("filtered issues: %v", b)
+	return b, nil
 }
 
 func githubBasicAuth(domain Domain) string {

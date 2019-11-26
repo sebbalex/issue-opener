@@ -25,6 +25,7 @@ func main() {
 		flag.PrintDefaults()
 	}
 	repoURL := flag.String("repo-url", "", "The URL pointing to repository which contains the publiccode.yml.")
+	validErrors := flag.String("validation", "[]", "JSON representing validation errors array.")
 	helpPtr := flag.Bool("help", false, "Display command line usage.")
 	flag.Parse()
 
@@ -33,7 +34,7 @@ func main() {
 		return
 	}
 	if *repoURL != "" {
-		StartCLI(*repoURL, true, "[]")
+		StartCLI(*repoURL, true, *validErrors)
 	}
 }
 
@@ -49,6 +50,7 @@ func Start(url *url.URL, valid bool, valErrors interface{}) error {
 	event.URL = url
 	event.Valid = valid
 	event.ValidationError = valErrors.([]model.Error)
+	log.Debugf("on: %s", event)
 
 	d, err := e.IdentifyVCS(url)
 	e.StartFlow(url, d)
