@@ -30,7 +30,7 @@ type SingleRepoHandler func(domain Domain, url *url.URL, comments Comments) erro
 // CommentsHandler ...
 type CommentsHandler func(domain Domain, url *url.URL) error
 
-var ghUsername string = "developers-italia-bot"
+var ghUsername string = "developers-italia-bot" //developers-italia-bot
 
 // Ex:
 // time="2019-11-18T01:05:25Z" level=error msg="Error parsing publiccode.yml for https://raw.githubusercontent.com/AgID/pat/master/publiccode.yml."

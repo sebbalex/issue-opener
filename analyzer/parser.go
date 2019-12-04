@@ -11,7 +11,10 @@ import (
 // Message shorthand for model.Message
 type Message model.Message
 
-func parseGHComments(comments []model.Comment) ([]Message, error) {
+// Comment shorthand for model.Message
+type Comment model.Comment
+
+func parseGHComments(comments []Comment) ([]Message, error) {
 	var messages []Message
 	for _, c := range comments {
 		m, err := parseBodyComment(c.Body)
@@ -59,6 +62,6 @@ func messageToValidationErrors(m *Message) Message {
 	return *m
 }
 
-func mergeMessages(messages []model.Message) error {
+func mergeMessages(messages []Message) error {
 	return nil
 }
