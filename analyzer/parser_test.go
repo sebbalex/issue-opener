@@ -1,7 +1,7 @@
 package analyzer
 
 import (
-	"github.com/sebbalex/issue-opener/model"
+	. "github.com/sebbalex/issue-opener/model"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -25,10 +25,10 @@ func TestParseBodyComment(t *testing.T) {
 	log.SetLevel(log.DebugLevel)
 	keys := []string{"url", "name", "longDescription"}
 	reasons := []string{"missing mandatory key", "missing mandatory key", "too short (2), min 500 chars"}
-	var errors []model.Error
+	var errors []Error
 	for index := 0; index < len(keys); index++ {
 		errors = append(errors,
-			model.Error{
+			Error{
 				Key:    keys[index],
 				Reason: reasons[index],
 			},

@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"testing"
 
+	. "github.com/sebbalex/issue-opener/model"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
@@ -14,13 +15,16 @@ func TestGithub(t *testing.T) {
 	log.SetLevel(log.DebugLevel)
 	RegisterClientAPIs()
 	var e = NewEngine()
+	event := Event{}
 	for _, repoURL := range githubURLs {
 		urlParsed, err := url.Parse(repoURL)
 		if err != nil {
 			t.Errorf("Error parsing url %s err %v", repoURL, err)
 		}
+		event.URL = urlParsed
+		event.Message = make(chan Message)
 		d, err := e.IdentifyVCS(urlParsed)
-		assert.Equal(t, e.StartFlow(urlParsed, d), nil)
+		assert.Equal(t, e.StartFlow(&event, d), nil)
 	}
 }
 
@@ -39,7 +43,7 @@ func TestEnrichWithComments(t *testing.T) {
 
 		// should provide a valid id
 		issueID := 1
-		out, err := enrichWithComments(*d, urlParsed, issueID, comments)
+		out, err := enrichWithComments(*d, urlParsed, issueID)
 		if err != nil {
 			t.Errorf("Error %v", err)
 		}
@@ -71,7 +75,8 @@ func TestFilterValidIssue(t *testing.T) {
 		if err != nil {
 			t.Errorf("error filtering GH issues %v", err)
 		}
-		assert.Equal(t, len(out), 1)
+		// be carefull, this may fail if username in github.go:34 has changed
+		assert.Equal(t, 1, len(out))
 
 		for _, o := range out {
 			assert.Equal(t, o.User.Login, ghUsername)
@@ -100,7 +105,7 @@ func TestFilterInvalidIssues(t *testing.T) {
 			t.Errorf("error filtering GH issues %v", err)
 		}
 
-		assert.Equal(t, len(out), 0)
+		assert.Equal(t, 0, len(out))
 		assert.Empty(t, out)
 	}
 }
@@ -124,7 +129,8 @@ func TestFilterValidComments(t *testing.T) {
 		if err != nil {
 			t.Errorf("error filtering GH comments %v", err)
 		}
-		assert.Equal(t, len(out), 1)
+		// be carefull, this may fail if username in github.go:34 has changed
+		assert.Equal(t, 1, len(out))
 
 		for _, o := range out {
 			assert.Equal(t, o.User.Login, ghUsername)
@@ -153,7 +159,7 @@ func TestFilterInvalidComments(t *testing.T) {
 			t.Errorf("error filtering GH comments %v", err)
 		}
 
-		assert.Equal(t, len(out), 0)
+		assert.Equal(t, 0, len(out))
 		assert.Empty(t, out)
 	}
 }

@@ -8,7 +8,7 @@ import (
 	"os"
 
 	"github.com/sebbalex/issue-opener/engines"
-	"github.com/sebbalex/issue-opener/model"
+	. "github.com/sebbalex/issue-opener/model"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -46,14 +46,16 @@ func main() {
 //   it contains all validation errors
 func Start(url *url.URL, valid bool, valErrors interface{}) error {
 	log.Debug("starting...")
-	event := model.Event{}
+	event := Event{}
 	event.URL = url
 	event.Valid = valid
-	event.ValidationError = valErrors.([]model.Error)
+	event.ValidationError = valErrors.([]Error)
+	event.Message = make(chan Message, 100)
+
 	log.Debugf("on: %v", event)
 
 	d, err := e.IdentifyVCS(url)
-	e.StartFlow(url, d)
+	e.StartFlow(&event, d)
 	return err
 }
 
@@ -69,7 +71,7 @@ func StartCLI(urlString string, valid bool, valErrors string) error {
 		return err
 	}
 
-	var verr []model.Error
+	var verr []Error
 	// deserialize valErrors
 	err = json.Unmarshal([]byte(valErrors), &verr)
 	if err != nil {

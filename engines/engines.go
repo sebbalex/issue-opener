@@ -6,6 +6,7 @@ import (
 	"net/url"
 
 	vcs "github.com/alranel/go-vcsurl"
+	. "github.com/sebbalex/issue-opener/model"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -67,11 +68,12 @@ func NewEngine() *Engine {
 }
 
 // StartFlow ..
-func (e *Engine) StartFlow(url *url.URL, d *Domain) error {
+func (e *Engine) StartFlow(event *Event, d *Domain) error {
+	url := event.URL
 	if vcs.IsRawFile(url) {
-		url = vcs.GetRepo(url)
+		event.URL = vcs.GetRepo(url)
 	}
-	return d.processSingleRepo(url, e.comments)
+	return d.processSingleRepo(event)
 }
 
 // IdentifyVCS Will identify which VCS platform come

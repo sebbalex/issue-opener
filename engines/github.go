@@ -13,19 +13,20 @@ import (
 
 	vcs "github.com/alranel/go-vcsurl"
 	"github.com/italia/developers-italia-backend/crawler/httpclient"
-	"github.com/sebbalex/issue-opener/model"
+	parser "github.com/sebbalex/issue-opener/analyzer"
+	. "github.com/sebbalex/issue-opener/model"
 	log "github.com/sirupsen/logrus"
 )
 
-// Comments GH comment struct
-type Comments []model.Comment
+// Comments type
+type Comments []Comment
 
 // Issues type
-type Issues []model.GHIssue
+type Issues []GHIssue
 
 // SingleRepoHandler returns the client handler for an a
 // single repository (every domain has a different handler implementation).
-type SingleRepoHandler func(domain Domain, url *url.URL, comments Comments) error
+type SingleRepoHandler func(domain Domain, event *Event) error
 
 // CommentsHandler ...
 type CommentsHandler func(domain Domain, url *url.URL) error
@@ -58,8 +59,8 @@ func getAPIUrlAndHeaders(domain Domain, u url.URL) (*url.URL, map[string]string)
 
 // RegisterSingleGithubAPI ....
 func RegisterSingleGithubAPI() SingleRepoHandler {
-	return func(domain Domain, urlBase *url.URL, comments Comments) error {
-
+	return func(domain Domain, event *Event) error {
+		urlBase := event.URL
 		u, headers := getAPIUrlAndHeaders(domain, *urlBase)
 
 		// filtering for created by me
@@ -94,16 +95,31 @@ func RegisterSingleGithubAPI() SingleRepoHandler {
 		}
 		log.Tracef("filtered issues: %v", v)
 
-		// populate Comments chan
+		// Get comments, parse 'em and populate Message chan in Event
 		for _, issue := range v {
-			enrichWithComments(domain, urlBase, issue.Number, comments)
+			comments, errs := enrichWithComments(domain, urlBase, issue.Number)
+			if errs != nil {
+				return errs
+			}
+			comments = append(comments, createCommentFromIssueBody(v)...)
+			parser.ParseGHComments(event, comments)
 		}
 
 		return nil
 	}
 }
 
-func enrichWithComments(domain Domain, urlBase *url.URL, issueID int, comments Comments) (Comments, error) {
+func createCommentFromIssueBody(issues Issues) (comments Comments) {
+	for _, issue := range issues {
+		comment := Comment{}
+		comment.Body = issue.Body
+		comments = append(comments, comment)
+		// ... other fields
+	}
+	return comments
+}
+
+func enrichWithComments(domain Domain, urlBase *url.URL, issueID int) (Comments, error) {
 	if vcs.IsRawFile(urlBase) {
 		urlBase = vcs.GetRepo(urlBase)
 	}

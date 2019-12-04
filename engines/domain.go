@@ -3,10 +3,10 @@ package engines
 import (
 	"fmt"
 	"io/ioutil"
-	"net/url"
 	"strings"
 
 	"github.com/ghodss/yaml"
+	. "github.com/sebbalex/issue-opener/model"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -28,12 +28,12 @@ func (domain Domain) API() string {
 	return domain.Host[:truncateIndex]
 }
 
-func (domain Domain) processSingleRepo(url *url.URL, comments Comments) error {
+func (domain Domain) processSingleRepo(event *Event) error {
 	engine, err := GetSingleClientAPIEngine(domain.API())
 	if err != nil {
 		return err
 	}
-	return engine(domain, url, comments)
+	return engine(domain, event)
 }
 
 // ReadAndParseDomains read domainsFile and return the parsed content in a Domain slice.

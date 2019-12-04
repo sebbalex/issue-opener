@@ -4,24 +4,22 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/sebbalex/issue-opener/model"
+	. "github.com/sebbalex/issue-opener/model"
 	log "github.com/sirupsen/logrus"
 )
 
-// Message shorthand for model.Message
-type Message model.Message
-
-// Comment shorthand for model.Message
-type Comment model.Comment
-
-func parseGHComments(comments []Comment) ([]Message, error) {
+// ParseGHComments ...
+func ParseGHComments(event *Event, comments []Comment) ([]Message, error) {
 	var messages []Message
 	for _, c := range comments {
 		m, err := parseBodyComment(c.Body)
 		if err != nil {
+			log.Errorf("error parsing comment: %s", err)
 			return messages, nil
 		}
 		messages = append(messages, m)
+		event.Message <- m
+		log.Debugf("done appending message: %s", m)
 	}
 	return messages, nil
 }
@@ -51,7 +49,7 @@ func parseBodyComment(body string) (Message, error) {
 func messageToValidationErrors(m *Message) Message {
 	var validKey = regexp.MustCompile(`^-\ [a-zA-Z]+\ `)
 	for _, mess := range m.Message {
-		var e model.Error
+		var e Error
 		e.Key = validKey.FindString(mess)
 		e.Reason = strings.Trim(strings.Replace(mess, e.Key, "", 1), " ")
 		// normalizing
