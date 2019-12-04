@@ -17,25 +17,15 @@ This repository also contains an executable tool which can be used for validatin
 
 ```sh
 $ go run src/main.go
-$ curl -XPOST localhost:5000/pc/validate -d '{
-  "localisation": {
-    "localisationReady": false
-  },
-  "description": {
-    "it": {
-      "shortDescription": "test"
-    }
-  },
-  "publiccodeYmlVersion": "0.2"
-}'
+$ go run main.go -repo-url https://github.com/sebbalex/issue-opener
 ```
 ## Docker support
 
 This project can be packaged and executed using Docker as follow:
 
 ```sh
-$ docker build -t pc-web-validator .
-$ docker run -p5000:5000 --name pc-web-validator -it --rm pc-web-validator
+$ docker build -t issue-opener .
+$ docker run -p5000:5000 --name issue-opener -it --rm issue-opener
 ```
 
 
