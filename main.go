@@ -24,6 +24,7 @@ func main() {
 		fmt.Fprintf(flag.CommandLine.Output(), "Usage: %s [ OPTIONS ] URL\n", os.Args[0])
 		flag.PrintDefaults()
 	}
+	githubUsername := flag.String("gh-username", "", "Github username which represent this bot")
 	repoURL := flag.String("repo-url", "", "The URL pointing to repository which contains the publiccode.yml.")
 	validErrors := flag.String("validation", "[]", "JSON representing validation errors array.")
 	helpPtr := flag.Bool("help", false, "Display command line usage.")
@@ -35,6 +36,7 @@ func main() {
 	}
 	if *repoURL != "" {
 		StartCLI(*repoURL, true, *validErrors)
+		log.Debugf("set a model or global var in domain.go for usernames", githubUsername)
 	}
 }
 

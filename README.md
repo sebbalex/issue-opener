@@ -16,7 +16,7 @@ See related project for details: [publiccode-parser-go](https://github.com/itali
 This repository also contains an executable tool which can be used for validating a publiccode.yml file locally.
 
 ```sh
-$ go run src/main.go
+$ go run main.go --help
 $ go run main.go -repo-url https://github.com/sebbalex/issue-opener
 ```
 ## Docker support
