@@ -1,4 +1,4 @@
-# publiccode.yml web validator for Go
+# Issue Opener bot for malformed publiccode.yml
 
 [![Join the #publiccode channel](https://img.shields.io/badge/Slack%20channel-%23publiccode-blue.svg?logo=slack)](https://developersitalia.slack.com/messages/CAM3F785T)
 [![Get invited](https://slack.developers.italia.it/badge.svg)](https://slack.developers.italia.it/)
@@ -17,7 +17,8 @@ This repository also contains an executable tool which can be used for validatin
 
 ```sh
 $ go run main.go --help
-$ go run main.go -repo-url https://github.com/sebbalex/issue-opener
+$ go run main.go one https://github.com/sebbalex/issue-opener
+$ go run main.go one https://github.com/sebbalex/issue-opener "[]" #last arg will be a validation errors json array
 ```
 ## Docker support
 

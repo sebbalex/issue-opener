@@ -3,6 +3,8 @@ package engines
 import (
 	"fmt"
 	"io/ioutil"
+	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/ghodss/yaml"
@@ -38,8 +40,11 @@ func (domain Domain) processSingleRepo(event *Event) error {
 
 // ReadAndParseDomains read domainsFile and return the parsed content in a Domain slice.
 func ReadAndParseDomains(domainsFile string) ([]Domain, error) {
+	// Getting absolute path to be called from different packages/test files
+	_, b, _, _ := runtime.Caller(0)
+	basepath := filepath.Dir(b)
 	// Open and read domains file list.
-	data, err := ioutil.ReadFile(domainsFile)
+	data, err := ioutil.ReadFile(basepath + "/../" + domainsFile)
 	if err != nil {
 		return nil, fmt.Errorf("error in reading %s file: %v", domainsFile, err)
 	}

@@ -67,6 +67,27 @@ func NewEngine() *Engine {
 	return &e
 }
 
+// Start will get go API request and populate Event struct
+// - urlString is a string representing URL pointing to publiccode.yml
+//   but will accept also repo url
+// - valid is a bool representing publiccode validation status
+// - valErrors is a string in JSON format that will be deserialized
+//   it contains all validation errors
+func (e *Engine) Start(url *url.URL, valid bool, valErrors interface{}) error {
+	log.Debug("starting...")
+	event := Event{}
+	event.URL = url
+	event.Valid = valid
+	event.ValidationError = valErrors.([]Error)
+	event.Message = make(chan Message, 100)
+
+	log.Debugf("on: %v", event)
+
+	d, err := e.IdentifyVCS(url)
+	e.StartFlow(&event, d)
+	return err
+}
+
 // StartFlow ..
 func (e *Engine) StartFlow(event *Event, d *Domain) error {
 	url := event.URL
@@ -82,16 +103,12 @@ func (e *Engine) StartFlow(event *Event, d *Domain) error {
 // engine
 func (e *Engine) IdentifyVCS(url *url.URL) (*Domain, error) {
 	if vcs.IsBitBucket(url) {
-		// not yet implemented
 		return &Domain{Host: "bitbucket"}, errors.New("Not yet implemented")
 	} else if vcs.IsGitLab(url) {
-		// not yet implemented
 		return &Domain{Host: "gitlab"}, errors.New("Not yet implemented")
 	} else if vcs.IsGitHub(url) {
-		// return StartGithub(url)
 		return &Domain{Host: "github"}, nil
 	} else {
-		// not yet implemented
 		return &Domain{Host: "none"}, errors.New("Not yet implemented")
 	}
 }
