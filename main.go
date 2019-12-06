@@ -2,15 +2,26 @@ package main
 
 import (
 	"net/url"
+	"os"
 
 	"github.com/sebbalex/issue-opener/cmd"
 	"github.com/sebbalex/issue-opener/engines"
 	log "github.com/sirupsen/logrus"
 )
 
-func main() {
-	log.SetLevel(log.DebugLevel)
+func init() {
+	// Log as TEXT with fulltimestamp support
+	log.SetFormatter(&log.TextFormatter{FullTimestamp: true})
 
+	// Output to stdout instead of the default stderr
+	// Can be any io.Writer, see below for File example
+	log.SetOutput(os.Stdout)
+
+	// Only log the warning severity or above.
+	log.SetLevel(log.DebugLevel)
+}
+
+func main() {
 	//init API engines
 	engines.RegisterClientAPIs()
 

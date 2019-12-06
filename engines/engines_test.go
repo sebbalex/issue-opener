@@ -17,6 +17,11 @@ var badURLs = []string{
 	"https://gitlab.com/fusslab/fuss/raw/master/publiccode.yml",
 	"https://gerrit.libreoffice.org/plugins/gitiles/core/+/refs/heads/distro/cib/libreoffice-6-1",
 }
+var invalidURLs = []string{
+	"htps:/url",
+	"htps://url",
+	"url",
+}
 
 var githubURLs = []string{"https://raw.githubusercontent.com/AgID/pat/master/publiccode.yml"}
 
@@ -40,5 +45,14 @@ func TestIdentifyVCS(t *testing.T) {
 		}
 		_, err = e.IdentifyVCS(urlParsed)
 		assert.EqualError(t, err, "Not yet implemented")
+	}
+
+	for _, repoURL := range invalidURLs {
+		urlParsed, err := url.Parse(repoURL)
+		if err != nil {
+			t.Fail()
+		}
+		_, err = e.IdentifyVCS(urlParsed)
+		assert.EqualError(t, err, "Error parsing url, please specify a good one")
 	}
 }

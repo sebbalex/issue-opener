@@ -6,6 +6,7 @@ import (
 	"net/url"
 
 	vcs "github.com/alranel/go-vcsurl"
+	validator "github.com/asaskevich/govalidator"
 	. "github.com/sebbalex/issue-opener/model"
 	log "github.com/sirupsen/logrus"
 )
@@ -74,6 +75,9 @@ func NewEngine() *Engine {
 // - valErrors is a string in JSON format that will be deserialized
 //   it contains all validation errors
 func (e *Engine) Start(url *url.URL, valid bool, valErrors interface{}) error {
+	if !validator.IsURL(url.String()) {
+		return errors.New("Error parsing url, please specify a good one")
+	}
 	log.Debug("starting...")
 	event := Event{}
 	event.URL = url
@@ -102,6 +106,9 @@ func (e *Engine) StartFlow(event *Event, d *Domain) error {
 // this will handle vcs recognition and initiate with correct
 // engine
 func (e *Engine) IdentifyVCS(url *url.URL) (*Domain, error) {
+	if !validator.IsURL(url.String()) {
+		return &Domain{Host: "none"}, errors.New("Error parsing url, please specify a good one")
+	}
 	if vcs.IsBitBucket(url) {
 		return &Domain{Host: "bitbucket"}, errors.New("Not yet implemented")
 	} else if vcs.IsGitLab(url) {

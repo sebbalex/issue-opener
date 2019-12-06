@@ -10,8 +10,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var e = engines.NewEngine()
-
 func init() {
 	rootCmd.AddCommand(oneCmd)
 }
@@ -37,6 +35,7 @@ No organizations! Only single repositories!`,
 // TODO to be renamed
 func StartCLI(urlString string, valid bool, valErrors string) error {
 	log.Println("Handle event")
+	var e = engines.NewEngine()
 
 	urlParsed, err := url.Parse(urlString)
 	if err != nil {
