@@ -84,11 +84,19 @@ func (e *Engine) Start(url *url.URL, valid bool, valErrors interface{}) error {
 	event.Valid = valid
 	event.ValidationError = valErrors.([]Error)
 	event.Message = make(chan Message, 100)
+	defer close(event.Message)
 
 	log.Debugf("on: %v", event)
 
 	d, err := e.IdentifyVCS(url)
-	e.StartFlow(&event, d)
+	if err != nil {
+		return err
+	}
+	err = e.StartFlow(&event, d)
+	if err != nil {
+		return err
+	}
+
 	return err
 }
 

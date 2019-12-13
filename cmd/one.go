@@ -12,6 +12,8 @@ import (
 
 func init() {
 	rootCmd.AddCommand(oneCmd)
+
+	engines.RegisterClientAPIs()
 }
 
 var oneCmd = &cobra.Command{

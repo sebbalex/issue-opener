@@ -19,12 +19,12 @@ func init() {
 
 	// Only log the warning severity or above.
 	log.SetLevel(log.DebugLevel)
+
+	//init API engines
+	engines.RegisterClientAPIs()
 }
 
 func main() {
-	//init API engines
-	engines.RegisterClientAPIs()
-
 	// starting CLI
 	cmd.Execute()
 }
