@@ -31,7 +31,7 @@ type SingleRepoHandler func(domain Domain, event *Event) error
 // CommentsHandler ...
 type CommentsHandler func(domain Domain, url *url.URL) error
 
-var ghUsername string = "developers-italia-bot" //developers-italia-bot
+var ghUsername string = "sebbalex" //developers-italia-bot
 
 // Ex:
 // time="2019-11-18T01:05:25Z" level=error msg="Error parsing publiccode.yml for https://raw.githubusercontent.com/AgID/pat/master/publiccode.yml."
@@ -102,7 +102,8 @@ func RegisterSingleGithubAPI() SingleRepoHandler {
 				return errs
 			}
 			comments = append(comments, createCommentFromIssueBody(v)...)
-			parser.ParseGHComments(event, comments)
+			// return
+			return parser.ParseGHComments(event, comments)
 		}
 
 		return nil

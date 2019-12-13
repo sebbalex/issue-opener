@@ -9,19 +9,19 @@ import (
 )
 
 // ParseGHComments ...
-func ParseGHComments(event *Event, comments []Comment) ([]Message, error) {
-	var messages []Message
+func ParseGHComments(event *Event, comments []Comment) error {
+	// var messages []Message
 	for _, c := range comments {
 		m, err := parseBodyComment(c.Body)
 		if err != nil {
 			log.Errorf("error parsing comment: %s", err)
-			return messages, nil
+			return err
 		}
-		messages = append(messages, m)
+		// messages = append(messages, m)
 		event.Message <- m
 		log.Debugf("done appending message: %s", m)
 	}
-	return messages, nil
+	return nil
 }
 
 func parseBodyComment(body string) (Message, error) {
