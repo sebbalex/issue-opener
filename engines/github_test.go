@@ -57,6 +57,7 @@ func testGHAuth(t *testing.T) {
 }
 
 func TestFilterValidIssue(t *testing.T) {
+	ghUsername = "developers-italia-bot"
 	log.SetLevel(log.InfoLevel)
 	f := []string{"../tests/issues.json", "../tests/comments.json"}
 	for _, file := range f {
@@ -111,6 +112,7 @@ func TestFilterInvalidIssues(t *testing.T) {
 }
 
 func TestFilterValidComments(t *testing.T) {
+	ghUsername = "developers-italia-bot"
 	log.SetLevel(log.InfoLevel)
 	f := []string{"../tests/comments.json"}
 	for _, file := range f {
