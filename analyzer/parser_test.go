@@ -1,10 +1,12 @@
 package analyzer
 
 import (
+	"encoding/json"
+	"testing"
+
 	. "github.com/sebbalex/issue-opener/model"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestParseGHComments(t *testing.T) {
@@ -47,5 +49,13 @@ func TestParseBodyComment(t *testing.T) {
 
 	assert.Equal(t, len(message.ValidationErrors), 3)
 	assert.Equal(t, message.ValidationErrors, errors)
-
+}
+func TestJoinValidationErrors(t *testing.T) {
+	log.SetLevel(log.DebugLevel)
+	var errs []Error
+	json.Unmarshal([]byte(valErrors), &errs)
+	out := joinKeyValueValidationErrors(&errs)
+	log.Debugf("out %s", out)
+	assert.Len(t, out, 2)
+	assert.Equal(t, valErrorsStringArray, out)
 }

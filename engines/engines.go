@@ -3,6 +3,7 @@ package engines
 import (
 	"errors"
 	"fmt"
+	"github.com/sebbalex/issue-opener/analyzer"
 	"net/url"
 
 	vcs "github.com/alranel/go-vcsurl"
@@ -84,7 +85,6 @@ func (e *Engine) Start(url *url.URL, valid bool, valErrors interface{}) error {
 	event.Valid = valid
 	event.ValidationError = valErrors.([]Error)
 	event.Message = make(chan Message, 100)
-	defer close(event.Message)
 
 	log.Debugf("on: %v", event)
 
@@ -97,7 +97,15 @@ func (e *Engine) Start(url *url.URL, valid bool, valErrors interface{}) error {
 		return err
 	}
 
-	return err
+	// closing channel before reading in compare
+	close(event.Message)
+
+	err = analyzer.CompareMessages(&event)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // StartFlow ..

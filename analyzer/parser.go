@@ -1,6 +1,7 @@
 package analyzer
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 
@@ -24,13 +25,12 @@ func ParseGHComments(event *Event, comments []Comment) error {
 	return nil
 }
 
-func parseBodyComment(body string) (Message, error) {
-	// parsing body and extract validation errors
+func parseValidationErrors(valErrors []string) (Message, error) {
 	var m Message
 	var validHeader = regexp.MustCompile(`^###\ [a-zA-Z]+`)
 	var validMessage = regexp.MustCompile(`^-\ [a-zA-Z]+`)
 	var validFooter = regexp.MustCompile(`^##\ [a-zA-Z]+`)
-	for _, line := range strings.Split(strings.TrimSuffix(body, "\r\n"), "\r\n") {
+	for _, line := range valErrors {
 		switch {
 		case validHeader.MatchString(line):
 			m.Header = line
@@ -44,6 +44,19 @@ func parseBodyComment(body string) (Message, error) {
 	}
 	log.Debugf("Message: %s count %d", m, len(m.Message))
 	return messageToValidationErrors(&m), nil
+}
+
+func parseBodyComment(body string) (Message, error) {
+	// parsing body and extract validation errors
+	return parseValidationErrors(strings.Split(strings.TrimSuffix(body, "\r\n"), "\r\n"))
+}
+
+func joinKeyValueValidationErrors(errors *[]Error) []string {
+	var out []string
+	for _, value := range *errors {
+		out = append(out, fmt.Sprintf("%s %s", value.Key, value.Reason))
+	}
+	return out
 }
 
 func messageToValidationErrors(m *Message) Message {
