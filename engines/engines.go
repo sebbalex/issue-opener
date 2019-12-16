@@ -84,7 +84,7 @@ func (e *Engine) Start(url *url.URL, valid bool, valErrors interface{}) error {
 	event.URL = url
 	event.Valid = valid
 	event.ValidationError = valErrors.([]Error)
-	event.Message = make(chan Message, 100)
+	// event.Message = make(chan Message, 100)
 
 	log.Debugf("on: %v", event)
 
@@ -97,8 +97,8 @@ func (e *Engine) Start(url *url.URL, valid bool, valErrors interface{}) error {
 		return err
 	}
 
-	// closing channel before reading in compare
-	close(event.Message)
+	// // closing channel before reading in compare
+	// close(event.Message)
 
 	err = analyzer.CompareMessages(&event)
 	if err != nil {

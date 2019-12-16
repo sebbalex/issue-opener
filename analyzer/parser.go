@@ -19,7 +19,7 @@ func ParseGHComments(event *Event, comments []Comment) error {
 			return err
 		}
 		// messages = append(messages, m)
-		event.Message <- m
+		event.Message = append(event.Message, m)
 		log.Debugf("done appending message: %s", m)
 	}
 	return nil

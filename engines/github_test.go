@@ -22,7 +22,6 @@ func TestGithub(t *testing.T) {
 			t.Errorf("Error parsing url %s err %v", repoURL, err)
 		}
 		event.URL = urlParsed
-		event.Message = make(chan Message)
 		d, err := e.IdentifyVCS(urlParsed)
 		assert.Equal(t, e.StartFlow(&event, d), nil)
 	}

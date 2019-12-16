@@ -11,5 +11,5 @@ type Event struct {
 	// Validation Errors
 	ValidationError []Error `json:"validationErrors"`
 	// Message channel
-	Message chan Message `json:"message"`
+	Message []Message `json:"message"`
 }
