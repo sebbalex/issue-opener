@@ -31,6 +31,11 @@ func CompareMessages(event *Event) error {
 		delta := deltaValidationErrors(aggr, event.ValidationError)
 		m.ValidationErrors = delta
 		log.Debugf("delta is %v", delta)
+
+		if len(delta) == 0 {
+			event.Message = []Message{}
+			return nil
+		}
 	} else {
 		// No message exists, parse validationErrors
 		// and create new issue
@@ -40,7 +45,7 @@ func CompareMessages(event *Event) error {
 		m.ValidationErrors = event.ValidationError
 	}
 	m.Template()
-	event.Message = append(event.Message, m)
+	event.Message = append([]Message{}, m)
 	log.Debugf("m: %s", m.String())
 	log.Debugf("event: %v", event)
 	return nil

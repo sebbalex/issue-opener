@@ -65,10 +65,24 @@ func TestCompareMessagesWithEqualMessage(t *testing.T) {
 	event := createEvent()
 	fillMessages(event)
 	CompareMessages(event)
-	m := event.Message[0]
-	assert.Len(t, m.ValidationErrors, 2)
-	assert.Equal(t, event.ValidationError, m.ValidationErrors)
-	assert.Len(t, m.Message, 2)
+	assert.Len(t, event.Message, 0)
+}
+
+func TestCompareMessagesWithDifferentMessage(t *testing.T) {
+	log.SetLevel(log.DebugLevel)
+	event := createEvent()
+	var verr, verr2 []Error
+	json.Unmarshal([]byte(valErrors), &verr)
+	json.Unmarshal([]byte(valErrors2), &verr2)
+	event.Message = []Message{
+		Message{
+			ValidationErrors: verr,
+		},
+	}
+	event.ValidationError = verr2
+	CompareMessages(event)
+	assert.Len(t, event.Message, 1)
+	assert.Len(t, event.Message[0].ValidationErrors, 3)
 }
 
 func TestDeltaMessage(t *testing.T) {
