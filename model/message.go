@@ -14,6 +14,8 @@ type Message struct {
 	URL *url.URL
 	// Header
 	Header string
+	// Title
+	Title string
 	// Message
 	Message []string
 	// ValidationErrors
@@ -25,6 +27,7 @@ type Message struct {
 // Template function will create necessary stuff to publish
 // new message on code hosting platform
 func (m *Message) Template() {
+	m.Title = "Validation errors on publiccode.yml"
 	m.Header = `
 			### Developers Italia - Issue Opener for publiccode.yml
 			We have discovered potential issue on validating your publiccode.yml.
