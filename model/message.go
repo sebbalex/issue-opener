@@ -1,10 +1,11 @@
 package model
 
-import "net/url"
-
-import "fmt"
-
-import "strings"
+import (
+	"encoding/json"
+	"fmt"
+	"net/url"
+	"strings"
+)
 
 // Message represent one comment dropped by Issue Opener.
 // It contains all vaidation errors reported in related
@@ -16,6 +17,9 @@ type Message struct {
 	Header string
 	// Title
 	Title string
+	// Append indicate if message is in apend to an already
+	// exists issue or if it is needed to create a new one
+	Append bool
 	// Message
 	Message []string
 	// ValidationErrors
@@ -47,6 +51,13 @@ func (m *Message) Template() {
 
 func (m *Message) String() string {
 	return fmt.Sprintf("%s\n%v\n%s", m.Header, strings.Join(m.Message, "\n"), m.Footer)
+}
+
+// MessageToJSON convert actual obj to JSON
+// following rules: https://developer.github.com/v3/issues/#create-an-issue
+func (m *Message) MessageToJSON() ([]byte, error) {
+	obj := map[string]interface{}{"title": m.Title, "body": m.String()}
+	return json.Marshal(obj)
 }
 
 /*

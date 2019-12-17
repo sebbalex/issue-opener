@@ -30,6 +30,7 @@ func CompareMessages(event *Event) error {
 		}
 		delta := deltaValidationErrors(aggr, event.ValidationError)
 		m.ValidationErrors = delta
+		m.Append = true
 		log.Debugf("delta is %v", delta)
 
 		if len(delta) == 0 {
@@ -43,6 +44,7 @@ func CompareMessages(event *Event) error {
 		// insert back in Event
 		// create issue
 		m.ValidationErrors = event.ValidationError
+		m.Append = false
 	}
 	m.Template()
 	event.Message = append([]Message{}, m)
