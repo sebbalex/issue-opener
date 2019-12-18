@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var urlString string = "https://raw.githubusercontent.com/AgID/pat/master/publiccode.yml"
+var urlString string = "https://raw.githubusercontent.com/sebbalex/issue-opener/master/publiccode.yml"
 var valid bool = false
 var valErrors string = `[
 		{"key": "name", "reason": "missing mandatory key"}, 
