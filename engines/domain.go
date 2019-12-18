@@ -27,8 +27,17 @@ func (domain Domain) API() string {
 	if truncateIndex == -1 {
 		return domain.Host
 	}
-
 	return domain.Host[:truncateIndex]
+}
+
+func (domain Domain) mapDomainForAuth(dom []Domain) (Domain, error) {
+	for _, d := range dom {
+		if domain.Host == d.API() {
+			d.Host = d.API() // hack to have API endpoint (withoud tld) in domain
+			return d, nil
+		}
+	}
+	return Domain{}, errors.New("No domain registered in domains.yml for " + domain.Host)
 }
 
 func (domain Domain) processPostOrAppendIssue(event *Event) error {
