@@ -1,15 +1,16 @@
 package engines
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
 	"runtime"
 	"strings"
 
-	"github.com/ghodss/yaml"
 	. "github.com/sebbalex/issue-opener/model"
 	log "github.com/sirupsen/logrus"
+	yaml "gopkg.in/yaml.v2"
 )
 
 // Domain is a single code hosting service.
@@ -28,6 +29,26 @@ func (domain Domain) API() string {
 	}
 
 	return domain.Host[:truncateIndex]
+}
+
+func (domain Domain) processPostOrAppendIssue(event *Event) error {
+	if len(event.Message) == 0 {
+		log.Errorf("message is not present %v", event)
+		return errors.New("message not present")
+	}
+	message := event.Message[0]
+	var engine SingleRepoHandler
+	var err error
+	if message.Append {
+		engine, err = GetAppendIssueClientAPIEngine(domain.API())
+	} else {
+		engine, err = GetPostIssueClientAPIEngine(domain.API())
+	}
+
+	if err != nil {
+		return err
+	}
+	return engine(domain, event)
 }
 
 func (domain Domain) processSingleRepo(event *Event) error {
