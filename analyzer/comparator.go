@@ -48,8 +48,8 @@ func CompareMessages(event *Event) error {
 	}
 	m.Template()
 	event.Message = append([]Message{}, m)
-	log.Debugf("m: %s", m.String())
-	log.Debugf("event: %v", event)
+	log.Tracef("m: %s", m.String())
+	log.Tracef("event: %v", event)
 	return nil
 }
 
