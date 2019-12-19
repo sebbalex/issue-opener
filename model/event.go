@@ -10,6 +10,8 @@ type Event struct {
 	Valid bool `json:"valid"`
 	// Validation Errors
 	ValidationError []Error `json:"validationErrors"`
-	// Message channel
+	// Message slice
 	Message []Message `json:"message"`
+	// DryRun
+	DryRun bool `json:"dryRun"`
 }

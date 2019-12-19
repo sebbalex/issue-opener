@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var dryRun bool
 var rootCmd = &cobra.Command{
 	Use:   "issue-opener",
 	Short: "Issue Opener bot for malformed publiccode.yml",
@@ -23,4 +24,8 @@ func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func init() {
+	rootCmd.PersistentFlags().BoolVarP(&dryRun, "dry-run", "d", false, "Dry Run - Issue Opener will not post any issue")
 }

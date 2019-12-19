@@ -14,5 +14,5 @@ var valErrors string = `[
 	]`
 
 func TestStartf(t *testing.T) {
-	assert.Nil(t, StartCLI(urlString, valid, valErrors))
+	assert.Nil(t, StartCLI(urlString, valid, valErrors, true))
 }

@@ -35,7 +35,7 @@ func main() {
 // - valid is a bool representing publiccode validation status
 // - valErrors is a string in JSON format that will be deserialized
 //   it contains all validation errors
-func Start(url *url.URL, valid bool, valErrors interface{}) error {
+func Start(url *url.URL, valid bool, valErrors interface{}, dryRun bool) error {
 	e := engines.NewEngine()
-	return e.Start(url, valid, valErrors)
+	return e.Start(url, valid, valErrors, dryRun)
 }

@@ -28,14 +28,14 @@ No organizations! Only single repositories!`,
 		if len(args) > 1 && args[1] != "" {
 			validationErrors = args[1]
 		}
-		StartCLI(url, false, validationErrors)
+		StartCLI(url, false, validationErrors, dryRun)
 	},
 }
 
 // StartCLI same as above but accepting a more generic
 // type for handy usage
 // TODO to be renamed
-func StartCLI(urlString string, valid bool, valErrors string) error {
+func StartCLI(urlString string, valid bool, valErrors string, dryRun bool) error {
 	log.Println("Handle event")
 	var e = engines.NewEngine()
 
@@ -53,7 +53,7 @@ func StartCLI(urlString string, valid bool, valErrors string) error {
 		return err
 	}
 
-	if err = e.Start(urlParsed, valid, verr); err != nil {
+	if err = e.Start(urlParsed, valid, verr, dryRun); err != nil {
 		log.Fatal(err)
 		return err
 	}

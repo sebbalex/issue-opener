@@ -1,6 +1,7 @@
 package engines
 
 import (
+	"bytes"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -12,8 +13,8 @@ import (
 	"strings"
 
 	vcs "github.com/alranel/go-vcsurl"
-	"github.com/italia/developers-italia-backend/crawler/httpclient"
 	parser "github.com/sebbalex/issue-opener/analyzer"
+	httpclient "github.com/sebbalex/issue-opener/httpclient"
 	. "github.com/sebbalex/issue-opener/model"
 	log "github.com/sirupsen/logrus"
 )
@@ -55,9 +56,72 @@ func getAPIUrlAndHeaders(domain Domain, u url.URL) (*url.URL, map[string]string)
 	return &u, headers
 }
 
+// RegisterAppendIssueGithubAPI register API that will post an issue for given validation
+// errors using ghUsername user on GitHub
+func RegisterAppendIssueGithubAPI() SingleRepoHandler {
+	return func(domain Domain, event *Event) error {
+		log.Infof("call RegisterAppendIssueGithubAPI()")
+		u, headers := getAPIUrlAndHeaders(domain, *event.URL)
+		log.Debugf("headers: %s", headers)
+		if len(event.Message) == 0 {
+			log.Errorf("message is not present %v", event)
+			return errors.New("message not present")
+		}
+		message := event.Message[0]
+		messageJSON, err := message.MessageToJSON()
+		if err != nil {
+			log.Errorf("error converting to JSON: %s", err)
+
+		}
+		if event.DryRun {
+			log.Infof("dry-run mode posting: %s", messageJSON)
+		} else {
+			log.Debugf("posting: %s to %s", messageJSON, u)
+			// TODO
+		}
+		return nil
+	}
+}
+
+// RegisterPostIssueGithubAPI register API that will post an issue for given validation
+// errors using ghUsername user on GitHub
+func RegisterPostIssueGithubAPI() SingleRepoHandler {
+	return func(domain Domain, event *Event) error {
+		log.Infof("call RegisterPostIssueGithubAPI()")
+		u, headers := getAPIUrlAndHeaders(domain, *event.URL)
+		log.Debugf("headers: %s", headers)
+		if len(event.Message) == 0 {
+			log.Errorf("message is not present %v", event)
+			return errors.New("message not present")
+		}
+		message := event.Message[0]
+		messageJSON, err := message.MessageToJSON()
+		if err != nil {
+			log.Errorf("error converting to JSON: %s", err)
+
+		}
+		if event.DryRun {
+			log.Infof("dry-run mode posting: %s", messageJSON)
+		} else {
+			log.Debugf("posting: %s", messageJSON)
+			resp, err := httpclient.PostURL(u.String(), headers, bytes.NewReader(messageJSON))
+			if err != nil {
+				log.Errorf("error posting issues api: %v", err)
+				return err
+			}
+			if resp.Status.Code != http.StatusOK {
+				log.Warnf("Request returned: %s", string(resp.Body))
+				return errors.New("request returned an incorrect http.Status: " + resp.Status.Text)
+			}
+		}
+		return nil
+	}
+}
+
 //https://developer.github.com/v3/issues/#list-issues-for-a-repository GET /repos/:owner/:repo/issues
 
-// RegisterSingleGithubAPI ....
+// RegisterSingleGithubAPI register API to get all issues
+// which have been created from ghUsername user on GitHub
 func RegisterSingleGithubAPI() SingleRepoHandler {
 	return func(domain Domain, event *Event) error {
 		urlBase := event.URL

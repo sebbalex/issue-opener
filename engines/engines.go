@@ -32,7 +32,9 @@ type Repository struct {
 
 // ClientAPI contains all the API function in a single Client.
 type ClientAPI struct {
-	Single SingleRepoHandler
+	Single      SingleRepoHandler
+	PostIssue   SingleRepoHandler
+	AppendIssue SingleRepoHandler
 }
 
 var clientAPIs map[string]ClientAPI
@@ -47,7 +49,9 @@ func RegisterClientAPIs() {
 	}
 
 	clientAPIs["github"] = ClientAPI{
-		Single: RegisterSingleGithubAPI(),
+		Single:      RegisterSingleGithubAPI(),
+		PostIssue:   RegisterPostIssueGithubAPI(),
+		AppendIssue: RegisterAppendIssueGithubAPI(),
 	}
 
 	clientAPIs["gitlab"] = ClientAPI{
@@ -75,7 +79,7 @@ func NewEngine() *Engine {
 // - valid is a bool representing publiccode validation status
 // - valErrors is a string in JSON format that will be deserialized
 //   it contains all validation errors
-func (e *Engine) Start(url *url.URL, valid bool, valErrors interface{}) error {
+func (e *Engine) Start(url *url.URL, valid bool, valErrors interface{}, dryRun bool) error {
 	if !validator.IsURL(url.String()) {
 		return errors.New("Error parsing url, please specify a good one")
 	}
@@ -83,12 +87,17 @@ func (e *Engine) Start(url *url.URL, valid bool, valErrors interface{}) error {
 	event := Event{}
 	event.URL = url
 	event.Valid = valid
+	event.DryRun = dryRun
 	event.ValidationError = valErrors.([]Error)
-	// event.Message = make(chan Message, 100)
 
 	log.Debugf("on: %v", event)
 
 	d, err := e.IdentifyVCS(url)
+	if err != nil {
+		return err
+	}
+
+	*d, err = d.mapDomainForAuth(e.domains)
 	if err != nil {
 		return err
 	}
@@ -97,10 +106,12 @@ func (e *Engine) Start(url *url.URL, valid bool, valErrors interface{}) error {
 		return err
 	}
 
-	// // closing channel before reading in compare
-	// close(event.Message)
-
 	err = analyzer.CompareMessages(&event)
+	if err != nil {
+		return err
+	}
+
+	err = d.processPostOrAppendIssue(&event)
 	if err != nil {
 		return err
 	}
@@ -136,10 +147,29 @@ func (e *Engine) IdentifyVCS(url *url.URL) (*Domain, error) {
 	}
 }
 
-// GetSingleClientAPIEngine checks if the API client for the requested single repository clientAPI exists and return its handler.
+// GetSingleClientAPIEngine checks if the API client for the requested
+// single repository clientAPI exists and return its handler.
 func GetSingleClientAPIEngine(clientAPI string) (SingleRepoHandler, error) {
 	if clientAPIs[clientAPI].Single != nil {
 		return clientAPIs[clientAPI].Single, nil
 	}
 	return nil, fmt.Errorf("no single client found for %s", clientAPI)
+}
+
+// GetPostIssueClientAPIEngine checks if the API client
+// for the requested Post Issue clientAPI exists and return its handler.
+func GetPostIssueClientAPIEngine(clientAPI string) (SingleRepoHandler, error) {
+	if clientAPIs[clientAPI].PostIssue != nil {
+		return clientAPIs[clientAPI].PostIssue, nil
+	}
+	return nil, fmt.Errorf("no PostIssue client found for %s", clientAPI)
+}
+
+// GetAppendIssueClientAPIEngine checks if the API client
+// for the requested Post Issue clientAPI exists and return its handler.
+func GetAppendIssueClientAPIEngine(clientAPI string) (SingleRepoHandler, error) {
+	if clientAPIs[clientAPI].AppendIssue != nil {
+		return clientAPIs[clientAPI].AppendIssue, nil
+	}
+	return nil, fmt.Errorf("no AppendIssue client found for %s", clientAPI)
 }

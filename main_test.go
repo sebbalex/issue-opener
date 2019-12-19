@@ -2,6 +2,8 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
+	"net/http"
 	"net/url"
 	"testing"
 
@@ -16,8 +18,10 @@ var valErrors string = `[
 		{"key": "localisation_ready", "reason": "missing mandatory key"}
 	]`
 
-// TODO disable logging in stdout while testing
-
+// handlerEmpty print an empty response
+func handlerEmpty(w http.ResponseWriter, _ *http.Request) {
+	fmt.Fprint(w, "")
+}
 func TestStart(t *testing.T) {
 	urlParsed, err := url.Parse(urlString)
 	if err != nil {
@@ -31,5 +35,5 @@ func TestStart(t *testing.T) {
 		t.Errorf("error on unmarsalling validation errors %s", err)
 	}
 
-	assert.Nil(t, Start(urlParsed, valid, verr))
+	assert.Nil(t, Start(urlParsed, valid, verr, true))
 }
