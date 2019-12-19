@@ -33,9 +33,9 @@ type Message struct {
 func (m *Message) Template() {
 	m.Title = "Validation errors on publiccode.yml"
 	m.Header = `
-			### Developers Italia - Issue Opener for publiccode.yml
-			We have discovered potential issue on validating your publiccode.yml.
-			Here some details:
+### Developers Italia - Issue Opener for publiccode.yml
+We have discovered potential issue on validating your publiccode.yml.
+Here some details:
 
 		`
 	if len(m.ValidationErrors) > 0 {
@@ -44,8 +44,8 @@ func (m *Message) Template() {
 		}
 	}
 	m.Footer = `
-		Please review your pubbliccode.
-		## find out more: https://developers.italia.it
+Please review your pubbliccode.
+## find out more: https://developers.italia.it
 	`
 }
 

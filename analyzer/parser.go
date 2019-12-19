@@ -20,7 +20,7 @@ func ParseGHComments(event *Event, comments []Comment) error {
 		}
 		// messages = append(messages, m)
 		event.Message = append(event.Message, m)
-		log.Debugf("done appending message: %s", m)
+		log.Debugf("done appending message: %v", m)
 	}
 	return nil
 }
@@ -42,7 +42,7 @@ func parseValidationErrors(valErrors []string) (Message, error) {
 			log.Debug("It doesn't match")
 		}
 	}
-	log.Debugf("Message: %s count %d", m, len(m.Message))
+	log.Debugf("Message: %v count %d", m, len(m.Message))
 	return messageToValidationErrors(&m), nil
 }
 
