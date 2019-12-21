@@ -69,16 +69,23 @@ func RegisterAppendIssueGithubAPI() SingleRepoHandler {
 		}
 		message := event.Message[0]
 		messageJSON, err := message.MessageToJSON()
+		u.Path = path.Join(u.Path, strconv.Itoa(message.IssueID), "comments")
 		if err != nil {
 			log.Errorf("error converting to JSON: %s", err)
-
 		}
 		if event.DryRun {
-			log.Infof("dry-run mode posting: %s", messageJSON)
-			log.Debugf("issue ID: %s", message.IssueID)
+			log.Infof("dry-run mode appending: %s to: %s", messageJSON, u)
 		} else {
-			log.Debugf("posting: %s to %s", messageJSON, u)
-			// TODO
+			log.Debugf("appending: %s to %s", messageJSON, u)
+			resp, err := httpclient.PostURL(u.String(), headers, bytes.NewReader(messageJSON))
+			if err != nil {
+				log.Errorf("error posting issues api: %v", err)
+				return err
+			}
+			if resp.Status.Code != http.StatusOK {
+				log.Warnf("Request returned: %s", string(resp.Body))
+				return errors.New("request returned an incorrect http.Status: " + resp.Status.Text)
+			}
 		}
 		return nil
 	}
