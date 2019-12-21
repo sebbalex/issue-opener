@@ -37,7 +37,7 @@ func (m *Message) Template() {
 We have discovered potential issue on validating your publiccode.yml.
 Here some details:
 
-		`
+`
 	if len(m.ValidationErrors) > 0 {
 		for _, valErr := range m.ValidationErrors {
 			m.Message = append(m.Message, fmt.Sprintf("- %s %s", valErr.Key, valErr.Reason))
@@ -45,8 +45,7 @@ Here some details:
 	}
 	m.Footer = `
 Please review your pubbliccode.
-## find out more: https://developers.italia.it
-	`
+## find out more: https://developers.italia.it`
 }
 
 func (m *Message) String() string {
