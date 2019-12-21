@@ -13,6 +13,8 @@ import (
 type Message struct {
 	// URL Represent comment URL
 	URL *url.URL
+	// IssueID
+	IssueID int
 	// Header
 	Header string
 	// Title

@@ -10,7 +10,7 @@ import (
 )
 
 // ParseGHComments ...
-func ParseGHComments(event *Event, comments []Comment) error {
+func ParseGHComments(event *Event, comments []Comment, issueID int) error {
 	// var messages []Message
 	for _, c := range comments {
 		m, err := parseBodyComment(c.Body)
@@ -19,6 +19,7 @@ func ParseGHComments(event *Event, comments []Comment) error {
 			return err
 		}
 		// messages = append(messages, m)
+		m.IssueID = issueID
 		event.Message = append(event.Message, m)
 		log.Debugf("done appending message: %v", m)
 	}

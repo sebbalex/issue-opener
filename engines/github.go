@@ -75,6 +75,7 @@ func RegisterAppendIssueGithubAPI() SingleRepoHandler {
 		}
 		if event.DryRun {
 			log.Infof("dry-run mode posting: %s", messageJSON)
+			log.Debugf("issue ID: %s", message.IssueID)
 		} else {
 			log.Debugf("posting: %s to %s", messageJSON, u)
 			// TODO
@@ -166,8 +167,7 @@ func RegisterSingleGithubAPI() SingleRepoHandler {
 				return errs
 			}
 			comments = append(comments, createCommentFromIssueBody(v)...)
-			// return
-			return parser.ParseGHComments(event, comments)
+			return parser.ParseGHComments(event, comments, issue.Number)
 		}
 
 		return nil

@@ -25,8 +25,13 @@ func CompareMessages(event *Event) error {
 		// delta := deltaMessage(aggr, joinKeyValueValidationErrors(&event.ValidationError))
 
 		var aggr []Error
-		for _, m := range event.Message {
-			aggr = append(aggr, m.ValidationErrors...)
+		for _, mi := range event.Message {
+			aggr = append(aggr, mi.ValidationErrors...)
+			// TODO
+			// here we should have one single unique IssueID
+			// but could exists cases where multiple issue are
+			// live sametime, which do we get? and how?
+			m.IssueID = mi.IssueID
 		}
 		delta := deltaValidationErrors(aggr, event.ValidationError)
 		m.ValidationErrors = delta
