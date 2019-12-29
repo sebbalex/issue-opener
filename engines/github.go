@@ -245,7 +245,7 @@ func filterMyIssues(ghis Issues) (Issues, error) {
 	b := ghis[:0]
 	for _, x := range ghis {
 		log.Debugf("filterMyIssues() issues ID: %v", x.Number)
-		if x.User.Login == ghUsername {
+		if x.User.Login == ghUsername && x.Title == "Validation errors on publiccode.yml" {
 			log.Debugf("filterMyIssues() issue belongs to me: %v", x.Number)
 			b = append(b, x)
 		}
