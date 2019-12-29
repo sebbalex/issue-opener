@@ -254,7 +254,7 @@
         "html_url": "https://github.com/octocat/Hello-World/issues/1347",
         "number": 1347,
         "state": "open",
-        "title": "Found a bug",
+        "title": "Validation errors on publiccode.yml",
         "body": "I'm having a problem with this.",
         "user": {
             "login": "developers-italia-bot",

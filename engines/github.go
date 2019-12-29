@@ -82,7 +82,7 @@ func RegisterAppendIssueGithubAPI() SingleRepoHandler {
 				log.Errorf("error posting issues api: %v", err)
 				return err
 			}
-			if resp.Status.Code != http.StatusOK {
+			if resp.Status.Code != http.StatusCreated {
 				log.Warnf("Request returned: %s", string(resp.Body))
 				return errors.New("request returned an incorrect http.Status: " + resp.Status.Text)
 			}
@@ -117,7 +117,7 @@ func RegisterPostIssueGithubAPI() SingleRepoHandler {
 				log.Errorf("error posting issues api: %v", err)
 				return err
 			}
-			if resp.Status.Code != http.StatusOK {
+			if resp.Status.Code != http.StatusCreated {
 				log.Warnf("Request returned: %s", string(resp.Body))
 				return errors.New("request returned an incorrect http.Status: " + resp.Status.Text)
 			}

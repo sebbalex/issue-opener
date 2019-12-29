@@ -79,6 +79,11 @@ func Request(URL string, verb string, headers map[string]string, body io.Reader)
 			return statusOK(resp)
 		}
 
+		// Check if the request results in http OK.
+		if resp.StatusCode == http.StatusCreated {
+			return statusOK(resp)
+		}
+
 		// Check if the request results in http notFound.
 		if resp.StatusCode == http.StatusNotFound {
 			log.Debugf("Status: %s - Resource: %s", resp.Status, URL)

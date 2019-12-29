@@ -58,7 +58,7 @@ func testGHAuth(t *testing.T) {
 func TestFilterValidIssue(t *testing.T) {
 	ghUsername = "developers-italia-bot"
 	log.SetLevel(log.InfoLevel)
-	f := []string{"../tests/issues.json", "../tests/comments.json"}
+	f := []string{"../tests/issues.json"}
 	for _, file := range f {
 		var is Issues
 
@@ -75,7 +75,6 @@ func TestFilterValidIssue(t *testing.T) {
 		if err != nil {
 			t.Errorf("error filtering GH issues %v", err)
 		}
-		// be carefull, this may fail if username in github.go:34 has changed
 		assert.Equal(t, 1, len(out))
 
 		for _, o := range out {
