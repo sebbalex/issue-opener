@@ -185,6 +185,7 @@ func createCommentFromIssueBody(issues Issues) (comments Comments) {
 	for _, issue := range issues {
 		comment := Comment{}
 		comment.Body = issue.Body
+		comment.User.Login = ghUsername
 		comments = append(comments, comment)
 		// ... other fields
 	}

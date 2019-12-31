@@ -34,8 +34,7 @@ type Message struct {
 // new message on code hosting platform
 func (m *Message) Template() {
 	m.Title = "Validation errors on publiccode.yml"
-	m.Header = `
-### Developers Italia - Issue Opener for publiccode.yml
+	m.Header = `### Developers Italia - Issue Opener for publiccode.yml
 We have discovered potential issue on validating your publiccode.yml.
 Here some details:
 

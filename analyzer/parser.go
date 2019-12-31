@@ -13,6 +13,7 @@ import (
 func ParseGHComments(event *Event, comments []Comment, issueID int) error {
 	// var messages []Message
 	for _, c := range comments {
+		log.Tracef("parsing comment body: %v", c.Body)
 		m, err := parseBodyComment(c.Body)
 		if err != nil {
 			log.Errorf("error parsing comment: %s", err)
