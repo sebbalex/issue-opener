@@ -42,8 +42,8 @@ func (domain Domain) mapDomainForAuth(dom []Domain) (Domain, error) {
 
 func (domain Domain) processPostOrAppendIssue(event *Event) error {
 	if len(event.Message) == 0 {
-		log.Errorf("message is not present %v", event)
-		return errors.New("message not present")
+		log.Warnf("message is not present, means wheter issue for that errors are already opened")
+		return nil
 	}
 	message := event.Message[0]
 	var engine SingleRepoHandler
