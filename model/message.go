@@ -45,7 +45,7 @@ Here some details:
 		}
 	}
 	m.Footer = `
-Please review your pubbliccode.
+Please review your publiccode.
 ## find out more: https://developers.italia.it`
 }
 
