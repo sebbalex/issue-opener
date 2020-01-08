@@ -69,6 +69,6 @@ Here some details:
 - name missing mandatory key
 - longDescription too short (2), min 500 chars
 
-Please review your pubbliccode.
+Please review your publiccode.
 ## find out more: https://developers.italia.it
 */
