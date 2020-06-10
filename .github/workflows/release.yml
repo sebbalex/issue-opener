@@ -2,7 +2,8 @@ name: goreleaser
 
 on:
   push:
-    branches: [ master ]
+    tags:
+      - '*'
 
 jobs:
   goreleaser:
@@ -22,17 +23,10 @@ jobs:
       -
         name: Unshallow
         run: git fetch --prune --unshallow
-        
-      - name: Get dependencies
-        run: |
-          go get -v -t -d ./...
 
       - name: Copy domains.yml
         run: |
           cp domains.yml.example domains.yml
-
-      - name: Build
-        run: go build -v .
 
       - name: Test
         run: go test -race ./...
