@@ -24,13 +24,6 @@ jobs:
         name: Unshallow
         run: git fetch --prune --unshallow
 
-      - name: Copy domains.yml
-        run: |
-          cp domains.yml.example domains.yml
-
-      - name: Test
-        run: go test -race ./...
-
       -
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
