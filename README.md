@@ -1,5 +1,6 @@
 # Issue Opener bot for malformed publiccode.yml
 
+![Go](https://github.com/sebbalex/issue-opener/workflows/Go/badge.svg)
 [![Join the #publiccode channel](https://img.shields.io/badge/Slack%20channel-%23publiccode-blue.svg?logo=slack)](https://developersitalia.slack.com/messages/CAM3F785T)
 [![Get invited](https://slack.developers.italia.it/badge.svg)](https://slack.developers.italia.it/)
 
