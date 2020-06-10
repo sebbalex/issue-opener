@@ -25,6 +25,10 @@ jobs:
     - name: Get dependencies
       run: |
         go get -v -t -d ./...
+        
+    - name: Copy domains.yml
+      run: |
+        cp domains.yml.example domains.yml
 
     - name: Build
       run: go build -v .
