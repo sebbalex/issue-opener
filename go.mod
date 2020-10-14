@@ -3,7 +3,7 @@ module github.com/sebbalex/issue-opener
 go 1.13
 
 require (
-	github.com/alranel/go-vcsurl v0.0.0-20190918163743-e14328dc728a
+	github.com/alranel/go-vcsurl v0.0.0-20201009104729-56346a70f40a
 	github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535
 	github.com/italia/developers-italia-backend/crawler v0.0.0-20200630161645-788d41888e95
 	github.com/kr/pretty v0.2.0 // indirect
