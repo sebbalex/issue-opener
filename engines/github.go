@@ -13,8 +13,8 @@ import (
 	"strings"
 
 	vcs "github.com/alranel/go-vcsurl"
+	httpclient "github.com/italia/httpclient-lib-go"
 	parser "github.com/sebbalex/issue-opener/analyzer"
-	httpclient "github.com/sebbalex/issue-opener/httpclient"
 	. "github.com/sebbalex/issue-opener/model"
 	log "github.com/sirupsen/logrus"
 )
