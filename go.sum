@@ -75,6 +75,8 @@ github.com/italia/developers-italia-backend/crawler v0.0.0-20200630161645-788d41
 github.com/italia/developers-italia-backend/crawler v0.0.0-20200630161645-788d41888e95/go.mod h1:L0RW3VU0xnJtGH9U4EHLqD+T6LXGZi9akwLDgBSf8jA=
 github.com/italia/httpclient-lib-go v0.0.0-20201009133728-9044482688d7 h1:jxY6N3KOTkhCrRN/Yj6+5nwBA0OR9O11918AV7PwEG8=
 github.com/italia/httpclient-lib-go v0.0.0-20201009133728-9044482688d7/go.mod h1:tO13wT41NVbqsP9MFBMulFqeC6zFdwuLNXi29lx/FiM=
+github.com/italia/httpclient-lib-go v0.0.1 h1:wxbmNmeHO4fM3+Z6p86WnjTK6B8+Zk2VMij0T1HcZYU=
+github.com/italia/httpclient-lib-go v0.0.1/go.mod h1:tO13wT41NVbqsP9MFBMulFqeC6zFdwuLNXi29lx/FiM=
 github.com/italia/publiccode-parser-go v0.0.0-20191010210128-7f178b8a5093/go.mod h1:q18a0jHIXgRVNJ12lI5mBHnVlhqLcUdQ2a3888PhTqY=
 github.com/italia/publiccode-parser-go v1.0.1/go.mod h1:cSfzmMsPUbAmbcXFNTuGYLhHk4Jgi3jhLjOYuMlnfOg=
 github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99/go.mod h1:1lJo3i6rXxKeerYnT8Nvf0QmHCRC1n8sfWVwXF2Frvo=
@@ -230,6 +232,8 @@ golang.org/x/sys v0.0.0-20200625212154-ddb9806d33ae h1:Ih9Yo4hSPImZOpfGuA4bR/ORK
 golang.org/x/sys v0.0.0-20200625212154-ddb9806d33ae/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20201009025420-dfb3f7c4e634 h1:bNEHhJCnrwMKNMmOx3yAynp5vs5/gRy+XWFtZFu7NBM=
 golang.org/x/sys v0.0.0-20201009025420-dfb3f7c4e634/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+golang.org/x/sys v0.0.0-20201014080544-cc95f250f6bc h1:HVFDs9bKvTxP6bh1Rj9MCSo+UmafQtI8ZWDPVwVk9g4=
+golang.org/x/sys v0.0.0-20201014080544-cc95f250f6bc/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.2/go.mod h1:bEr9sfX3Q8Zfm5fL9x+3itogRgK3+ptLWKqgva+5dAk=
 golang.org/x/time v0.0.0-20190308202827-9d24e82272b4/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
