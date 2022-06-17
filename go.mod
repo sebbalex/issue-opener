@@ -12,7 +12,7 @@ require (
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/testify v1.7.2
-	github.com/thoas/go-funk v0.7.0
+	github.com/thoas/go-funk v0.9.2
 	golang.org/x/sys v0.0.0-20201014080544-cc95f250f6bc // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	gopkg.in/yaml.v2 v2.4.0
